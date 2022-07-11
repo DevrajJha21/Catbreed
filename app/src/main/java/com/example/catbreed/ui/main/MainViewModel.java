@@ -1,5 +1,7 @@
 package com.example.catbreed.ui.main;
 
+import android.view.View;
+
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -19,44 +21,22 @@ import io.reactivex.disposables.CompositeDisposable;
 @HiltViewModel
 public class MainViewModel extends ViewModel {
     private Repository repository;
-    private SingleObserver<List<BreedsDatum>> disposableObserver;
+
     RxSingleSchedulers rxSingleSchedulers;
-private CompositeDisposable disposable=new CompositeDisposable();
+    private CompositeDisposable disposable = new CompositeDisposable();
+private MutableLiveData<Boolean> isSorted=new MutableLiveData();
     @Inject
-    public MainViewModel(Repository repository, RxSingleSchedulers rxSingleSchedulers){
-        this.repository=repository;
-        this.rxSingleSchedulers=rxSingleSchedulers;
+    public MainViewModel(Repository repository, RxSingleSchedulers rxSingleSchedulers) {
+        this.repository = repository;
+        this.rxSingleSchedulers = rxSingleSchedulers;
     }
-    private MutableLiveData<NetworkResponse> breedResponseLiveData=new MutableLiveData<>();
+
+    private MutableLiveData<NetworkResponse> breedResponseLiveData = new MutableLiveData<>();
 
     public MutableLiveData<NetworkResponse> getBreedResponseLiveData() {
         return breedResponseLiveData;
     }
 
-//    public void getCatBreeds(){
-//        disposableObserver = new SingleObserver<List<BreedsDatum>>() {
-//
-//            @Override
-//            public void onSubscribe(Disposable d) {
-//                breedResponseLiveData.postValue(NetworkResponse.loading());
-//            }
-//
-//            @Override
-//            public void onSuccess(List<BreedsDatum> value) {
-//                breedResponseLiveData.postValue(NetworkResponse.success(value));
-//            }
-//
-//            @Override
-//            public void onError(Throwable e) {
-//                breedResponseLiveData.postValue(NetworkResponse.error(e));
-//
-//            }
-//        };
-//        repository.getCatBreeds()
-//                .subscribeOn(Schedulers.newThread())
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe(disposableObserver);
-//    }
     public void getCatBreeds() {
         disposable.add(repository.getCatBreeds()
                 .doOnEvent((newsList, throwable) -> onLoading())
@@ -64,6 +44,7 @@ private CompositeDisposable disposable=new CompositeDisposable();
                 .subscribe(this::onSuccess,
                         this::onError));
     }
+
 
     private void onSuccess(List<BreedsDatum> newsList) {
         NetworkResponse.success(newsList);
@@ -77,7 +58,6 @@ private CompositeDisposable disposable=new CompositeDisposable();
     private void onLoading() {
         breedResponseLiveData.postValue(NetworkResponse.loading());
     }
-
 
 
 }

@@ -54,6 +54,12 @@ public class MainActivity extends AppCompatActivity {
         list = new ArrayList<>();
         catBreedAdapter = new CatBreedAdapter(list);
         recyclerView.setAdapter(catBreedAdapter);
+        binding.tvSort.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                sortByName();
+            }
+        });
     }
     // calling the cat breed listing api
     private void observeCatBreedResponse(){
@@ -118,5 +124,28 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    // Adding Sort functionality by name
+
+    private void sortByName(){
+        Comparator<BreedsDatum> comparator = new Comparator<BreedsDatum>() {
+            @Override
+            public int compare(BreedsDatum lhs, BreedsDatum rhs) {
+                return lhs.getName().compareTo(rhs.getName());
+            }
+        };
+
+// ordered by name
+        if (isSorted) {
+            Collections.sort(list, comparator);
+            isSorted=false;
+        }
+
+// Reverse order by name
+        else {
+            Collections.sort(list, Collections.reverseOrder(comparator));
+            isSorted=true;
+        }
+        catBreedAdapter.notifyDataSetChanged();
+    }
 
 }
