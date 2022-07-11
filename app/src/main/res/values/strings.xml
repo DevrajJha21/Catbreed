@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">CatBreeds</string>
+    <string name="filter">Sort</string>
+    <string name="sort">Sort</string>
+</resources>
