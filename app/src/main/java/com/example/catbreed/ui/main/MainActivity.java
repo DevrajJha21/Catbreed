@@ -1,9 +1,14 @@
 package com.example.catbreed.ui.main;
 
 import android.os.Bundle;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -17,6 +22,8 @@ import com.example.catbreed.ui.main.model.BreedsDatum;
 import com.example.catbreed.utils.AppUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import dagger.hilt.android.AndroidEntryPoint;
@@ -28,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private CatBreedAdapter catBreedAdapter;
     private ArrayList<BreedsDatum> list;
-
+    private Boolean isSorted = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,8 +81,42 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
+// Adding search menu bar on action bar
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        // Inflate menu with items using MenuInflator
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        MenuItem searchItem = menu.findItem(R.id.search_bar);
+        SearchView searchView = (SearchView) searchItem.getActionView();
+        searchView.setOnQueryTextListener(
+                new SearchView.OnQueryTextListener() {
+                    @Override
+                    public boolean onQueryTextSubmit(String query)
+                    {
+                        if (list.contains(query)) {
+                            catBreedAdapter.getFilter().filter(query);
+                        }
+                        else {
+                            Toast.makeText(MainActivity.this,
+                                    "Not found",
+                                    Toast.LENGTH_LONG)
+                                    .show();
+                        }
+                        return false;
+                    }
+                    @Override
+                    public boolean onQueryTextChange(String newText)
+                    {
+                        catBreedAdapter.getFilter().filter(newText);
+                        return false;
+                    }
 
+                });
 
+        return super.onCreateOptionsMenu(menu);
+
+    }
 
 
 }

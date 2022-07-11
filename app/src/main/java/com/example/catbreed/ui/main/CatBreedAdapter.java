@@ -2,6 +2,8 @@ package com.example.catbreed.ui.main;
 
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
@@ -13,7 +15,7 @@ import com.example.catbreed.ui.main.model.BreedsDatum;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CatBreedAdapter extends RecyclerView.Adapter<CatBreedAdapter.ViewHolder>  {
+public class CatBreedAdapter extends RecyclerView.Adapter<CatBreedAdapter.ViewHolder> implements Filterable {
    private ArrayList<BreedsDatum> breedList ;
     private ArrayList<BreedsDatum> fullBreedList;
     public CatBreedAdapter(ArrayList<BreedsDatum> breedList) {
@@ -48,6 +50,36 @@ public class CatBreedAdapter extends RecyclerView.Adapter<CatBreedAdapter.ViewHo
         return breedList.size();
     }
 
+    @Override
+    public Filter getFilter() {
+        return searchedFilter;
+    }
+    // added searching by name
+    private Filter searchedFilter = new Filter() {
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            ArrayList<BreedsDatum> filteredList = new ArrayList<>();
+            if (constraint == null || constraint.length() == 0) {
+                filteredList.addAll(fullBreedList);
+            } else {
+                String filterPattern = constraint.toString().toLowerCase().trim();
+                for (BreedsDatum item : fullBreedList) {
+                    if (item.getName().toLowerCase().contains(filterPattern)) {
+                        filteredList.add(item);
+                    }
+                }
+            }
+            FilterResults results = new FilterResults();
+            results.values = filteredList;
+            return results;
+        }
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            breedList.clear();
+            breedList.addAll((ArrayList) results.values);
+            notifyDataSetChanged();
+        }
+    };
 
 
     public class ViewHolder extends RecyclerView.ViewHolder {

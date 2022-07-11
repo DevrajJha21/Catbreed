@@ -8,7 +8,15 @@ android {
     dataBinding {
         enabled = true
     }
-
+    testOptions {
+        unitTests.returnDefaultValues = true
+        tasks.withType(Test) {
+            useJUnitPlatform()
+            testLogging {
+                events("passed", "skipped", "failed")
+            }
+        }
+    }
 
     defaultConfig {
         applicationId "com.example.catbreed"
@@ -65,5 +73,13 @@ dependencies {
 
     implementation 'com.intuit.sdp:sdp-android:1.1.0'
 
-
+    androidTestImplementation "androidx.arch.core:core-testing:2.1.0"
+    testImplementation "androidx.arch.core:core-testing:2.1.0"
+    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
+    testImplementation "org.mockito:mockito-core:$mockitoVersion"
+    testImplementation "androidx.arch.core:core-testing:2.1.0"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:$junit_jupiter_version"
+    testImplementation "org.junit.jupiter:junit-jupiter-params:$junit_jupiter_version"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junit_jupiter_version"
+    testImplementation("org.assertj:assertj-core:3.11.1")
 }
